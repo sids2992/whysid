@@ -129,6 +129,7 @@ def load_posts():
 CSS = """
 @font-face{font-family:A;src:url(/fonts/a-400.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:A;src:url(/fonts/a-400i.woff2) format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:A;src:url(/fonts/a-700.woff2) format("woff2");font-weight:700;font-style:normal;font-display:swap}
 :root{--bg:#f7f5f0;--fg:#1c1b19;--mute:#6b6761;--accent:#b8401f;color-scheme:light dark}
 @media(prefers-color-scheme:dark){:root{--bg:#151412;--fg:#ece9e2;--mute:#a39e95;--accent:#e8734d}}
 *{box-sizing:border-box}
@@ -146,13 +147,13 @@ a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-und
 .reply a{color:var(--accent)}
 .id{margin-top:64px;font-size:14px;line-height:1.4;color:var(--mute)}
 .nav{margin-top:12px;font-size:13px;line-height:1.4;color:var(--mute);display:flex;gap:16px}
-h1{font-size:22px;line-height:1.3;font-weight:400;margin-bottom:24px}
-.soc{margin:24px 0 56px;font-size:15px;line-height:1.5;color:var(--mute);display:flex;gap:20px;flex-wrap:wrap}
+h1{font-size:28px;line-height:1.2;font-weight:700;margin-bottom:20px}
+.soc{margin:28px 0 64px;font-size:15px;line-height:1.5;color:var(--mute);display:flex;gap:20px;flex-wrap:wrap}
 .list{display:flex;flex-direction:column}
 .list a{display:flex;justify-content:space-between;align-items:baseline;gap:16px;min-height:44px;padding:10px 0;text-decoration:none}
 .list a span{font-size:18px;line-height:1.4;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:var(--mute)}
 .list a time{font-size:13px;line-height:1.4;color:var(--mute);white-space:nowrap}
-@media(min-width:700px){html{font-size:21px;line-height:1.65}body{padding:112px 24px 96px}.t{font-size:15px}.q,.reply{font-size:19px}.id{font-size:15px}.nav{font-size:14px;gap:20px}h1{font-size:24px}.soc{font-size:16px;gap:24px}.list a span{font-size:19px}.list a time{font-size:14px}}
+@media(min-width:700px){html{font-size:21px;line-height:1.65}body{padding:112px 24px 96px}.t{font-size:15px}.q,.reply{font-size:19px}.id{font-size:15px}.nav{font-size:14px;gap:20px}h1{font-size:32px}.soc{font-size:16px;gap:24px}.list a span{font-size:19px}.list a time{font-size:14px}}
 """
 
 ANALYTICS = """<script>window.goatcounter={no_onload:false,allow_local:false,path:function(p){var r=goatcounter.get_query('r');return location.pathname+(r?'?r='+encodeURIComponent(r):'')}}</script>
@@ -335,6 +336,7 @@ def main():
     (OUT / "og").mkdir()
     shutil.copy(FONTS / "atkinson-hyperlegible-latin-400-normal.woff2", OUT / "fonts" / "a-400.woff2")
     shutil.copy(FONTS / "atkinson-hyperlegible-latin-400-italic.woff2", OUT / "fonts" / "a-400i.woff2")
+    shutil.copy(FONTS / "atkinson-hyperlegible-latin-700-normal.woff2", OUT / "fonts" / "a-700.woff2")
 
     (OUT / "index.html").write_text(render_home(site, posts), encoding="utf-8")
     (OUT / "404.html").write_text(render_404(site), encoding="utf-8")
