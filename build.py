@@ -146,6 +146,7 @@ a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-und
 .reply{font-size:18px;line-height:1.5;margin-top:12px}
 .reply a{color:var(--accent)}
 .id{margin-top:64px;font-size:14px;line-height:1.4;color:var(--mute)}
+.id a{text-decoration:none}.id a:hover{text-decoration:underline}
 .nav{margin-top:12px;font-size:13px;line-height:1.4;color:var(--mute);display:flex;gap:16px}
 h1{font-size:28px;line-height:1.2;font-weight:700;margin-bottom:20px}
 .soc{margin:28px 0 64px;font-size:15px;line-height:1.5;color:var(--mute);display:flex;gap:20px;flex-wrap:wrap}
@@ -200,13 +201,14 @@ def render_post(site, post, newer, older):
     parts.append(f'<p class="q">{inline(post["question"])}</p>')
     subject = quote(post["title"])
     parts.append(f'<p class="reply"><a href="mailto:{site["email"]}?subject={subject}">Reply</a></p>')
-    parts.append(f'<p class="id">{html.escape(site["name"])}. {html.escape(site["tagline"])}</p>')
-    nav = ['<a href="/">Home</a>']
+    parts.append(f'<p class="id"><a href="/">{html.escape(site["name"])}</a></p>')
+    nav = []
     if older:
         nav.append(f'<a href="/{older["slug"]}/">Previous</a>')
     if newer:
         nav.append(f'<a href="/{newer["slug"]}/">Next</a>')
-    parts.append('<p class="nav">' + "".join(nav) + "</p>")
+    if nav:
+        parts.append('<p class="nav">' + "".join(nav) + "</p>")
     desc = post["first"] or post["question"]
     return page(site, post["title"], desc, url, f"{site['domain']}/og/{post['slug']}.png", "\n".join(parts))
 
@@ -221,11 +223,11 @@ def render_home(site, posts):
     )
     parts.append(f'<div class="list">{rows}</div>')
     desc = first_sentence(re.sub(r"<[^>]+>", "", site["intro_html"]))
-    return page(site, f"{site['name']}. {site['tagline']}", desc, site["domain"] + "/", f"{site['domain']}/og/home.png", "\n".join(parts))
+    return page(site, site["name"], desc, site["domain"] + "/", f"{site['domain']}/og/home.png", "\n".join(parts))
 
 
 def render_404(site):
-    body = f'<p class="t">Not found</p><div class="body"><p>There is no page here.</p></div><p class="nav" style="margin-top:48px"><a href="/">Home</a></p>'
+    body = f'<p class="t">Not found</p><div class="body"><p>There is no page here.</p></div><p class="id"><a href="/">{html.escape(site["name"])}</a></p>'
     return page(site, "Not found", "Not found", site["domain"] + "/404", f"{site['domain']}/og/home.png", body)
 
 
@@ -241,7 +243,7 @@ def render_feed(site, posts):
     return (
         '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel>'
         f"<title>{html.escape(site['name'])}</title><link>{site['domain']}/</link>"
-        f"<description>{html.escape(site['tagline'])}</description>{''.join(items)}</channel></rss>"
+        f"<description>{html.escape(site.get('tagline') or site['name'])}</description>{''.join(items)}</channel></rss>"
     )
 
 
@@ -269,7 +271,7 @@ def card(site, post, out_path):
 
     img = Image.new("RGB", (W, H), bg)
     d = ImageDraw.Draw(img)
-    identity = f"{site['name']}. {site['tagline']}"
+    identity = site["name"]
 
     if post is None:  # home card
         f1, f2, f3 = ImageFont.truetype(regular, 56), ImageFont.truetype(regular, 26), ImageFont.truetype(regular, 20)
@@ -280,7 +282,7 @@ def card(site, post, out_path):
         for line in wrap(d, intro, f2, 960)[:3]:
             d.text((120, y), line, font=f2, fill=mute)
             y += 26 * 1.45
-        d.text((120, H - 96 - 20), site["tagline"], font=f3, fill=mute)
+        d.text((120, H - 96 - 20), "whysid.com", font=f3, fill=mute)
     elif post["picture"]:
         pic = Image.open(post["picture"]).convert("RGB")
         pw, ph = 840, 630
