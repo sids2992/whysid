@@ -136,7 +136,7 @@ body{margin:0;padding:64px 24px 48px;max-width:688px;margin-inline:auto;animatio
 p,h1{margin:0}
 a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
 .t{font-size:14px;line-height:1.4;color:var(--mute);margin-bottom:20px}
-.t time{white-space:nowrap}
+.t time{white-space:nowrap;font-size:.86em;letter-spacing:.01em}
 .pic{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:4px;margin-bottom:24px}
 .body p+p{margin-top:1em}
 .share{margin-top:48px;font-size:17px;line-height:1.5}
@@ -206,7 +206,7 @@ def render_post(site, post, newer, older):
         parts.append(f'<img class="pic" src="/{post["slug"]}/picture.jpg" alt="{html.escape(post["alt"], quote=True)}" width="1200" height="900">')
     parts.append(f'<p class="t">{html.escape(post["title"])} · <time datetime="{post["date"]:%Y-%m-%d}">{post["date"]:%-d %b %Y}</time></p>')
     parts.append('<div class="body">' + "".join(f"<p>{p}</p>" for p in post["paras_html"]) + "</div>")
-    share = "https://x.com/intent/post?text=" + quote(post["title"]) + "&url=" + quote(url, safe="")
+    share = "https://x.com/intent/post?text=" + quote(post["title"]) + "&url=" + quote(url, safe="") + "&via=sidvent"
     parts.append(f'<p class="share"><a href="{share}" target="_blank" rel="noopener">Share on X</a></p>')
     parts.append(f'<p class="id"><a href="/">{html.escape(site["name"])}</a></p>')
     nav = []
