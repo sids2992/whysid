@@ -94,8 +94,6 @@ def load_posts():
                 question = block.lstrip("? ").strip()
             else:
                 paras.append(block)
-        if not question:
-            sys.exit(f"{path.name}: needs a question line starting with '? '")
         plain = " ".join(strip_md(p) for p in paras)
         post = {
             "title": meta["title"].strip(),
@@ -127,35 +125,38 @@ def load_posts():
 # ---------------------------------------------------------------- html
 
 CSS = """
-@font-face{font-family:A;src:url(/fonts/a-400.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
-@font-face{font-family:A;src:url(/fonts/a-400i.woff2) format("woff2");font-weight:400;font-style:italic;font-display:swap}
-@font-face{font-family:A;src:url(/fonts/a-700.woff2) format("woff2");font-weight:700;font-style:normal;font-display:swap}
-:root{--bg:#f7f5f0;--fg:#1c1b19;--mute:#6b6761;--accent:#b8401f;color-scheme:light dark}
-@media(prefers-color-scheme:dark){:root{--bg:#151412;--fg:#ece9e2;--mute:#a39e95;--accent:#e8734d}}
+@font-face{font-family:A;src:url(/fonts/a.woff2) format("woff2");font-weight:200 800;font-style:normal;font-display:swap}
+:root{--bg:#f7f5f0;--fg:#1c1b19;--mute:#6b6761;--accent:#b8401f;--w:360;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--bg:#151412;--fg:#dcd8cf;--mute:#a39e95;--accent:#e8734d;--w:340}}
 *{box-sizing:border-box}
-html{background:var(--bg);color:var(--fg);font:400 20px/1.6 A,"Helvetica Neue",Arial,sans-serif;-webkit-text-size-adjust:100%}
+html{background:var(--bg);color:var(--fg);font:400 20px/1.6 A,"Helvetica Neue",Arial,sans-serif;font-variation-settings:"wght" var(--w);font-weight:var(--w);-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 body{margin:0;padding:64px 24px 48px;max-width:688px;margin-inline:auto;animation:in .15s ease-out}
 @keyframes in{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){body{animation:none}}
 p,h1{margin:0}
 a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
 .t{font-size:14px;line-height:1.4;color:var(--mute);margin-bottom:20px}
+.t time{white-space:nowrap}
 .pic{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:4px;margin-bottom:24px}
 .body p+p{margin-top:1em}
-.q{margin-top:48px;font-size:18px;line-height:1.5;font-style:italic}
-.reply{font-size:18px;line-height:1.5;margin-top:12px}
-.reply a{color:var(--accent)}
+.share{margin-top:48px;font-size:17px;line-height:1.5}
+.share a{color:var(--accent)}
 .id{margin-top:64px;font-size:14px;line-height:1.4;color:var(--mute)}
 .id a{text-decoration:none}.id a:hover{text-decoration:underline}
 .nav{margin-top:12px;font-size:13px;line-height:1.4;color:var(--mute);display:flex;gap:16px}
-h1{font-size:28px;line-height:1.2;font-weight:700;margin-bottom:20px}
+h1{font-size:28px;line-height:1.2;font-weight:700;font-variation-settings:"wght" 700;margin-bottom:20px}
 .soc{margin:28px 0 64px;font-size:15px;line-height:1.5;color:var(--mute);display:flex;gap:20px;flex-wrap:wrap}
+.soc a.ok{color:var(--accent);text-decoration:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .list{display:flex;flex-direction:column}
 .list a{display:flex;justify-content:space-between;align-items:baseline;gap:16px;min-height:44px;padding:10px 0;text-decoration:none}
 .list a span{font-size:18px;line-height:1.4;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:var(--mute)}
 .list a time{font-size:13px;line-height:1.4;color:var(--mute);white-space:nowrap}
-@media(min-width:700px){html{font-size:21px;line-height:1.65}body{padding:112px 24px 96px}.t{font-size:15px}.q,.reply{font-size:19px}.id{font-size:15px}.nav{font-size:14px;gap:20px}h1{font-size:32px}.soc{font-size:16px;gap:24px}.list a span{font-size:19px}.list a time{font-size:14px}}
+@media(min-width:700px){html{font-size:21px;line-height:1.65}body{padding:112px 24px 96px}.t{font-size:15px}.share{font-size:18px}.id{font-size:15px}.nav{font-size:14px;gap:20px}h1{font-size:32px}.soc{font-size:16px;gap:24px}.list a span{font-size:19px}.list a time{font-size:14px}}
 """
+
+COPY_JS = """<span class="sr" aria-live="polite"></span>
+<script>document.querySelectorAll('a[data-copy]').forEach(function(a){a.addEventListener('click',function(e){if(!navigator.clipboard)return;e.preventDefault();var t=a.textContent;navigator.clipboard.writeText(a.dataset.copy).then(function(){a.textContent='Copied';a.classList.add('ok');document.querySelector('.sr').textContent='Email address copied';setTimeout(function(){a.textContent=t;a.classList.remove('ok')},1600)},function(){location.href=a.href})})})</script>"""
 
 ANALYTICS = """<script>window.goatcounter={no_onload:false,allow_local:false,path:function(p){var r=goatcounter.get_query('r');return location.pathname+(r?'?r='+encodeURIComponent(r):'')}}</script>
 <script data-goatcounter="https://{code}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>"""
@@ -178,9 +179,16 @@ def page(site, title, desc, url, image, body, feed=True):
 <meta property="og:image" content="{image}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:site_name" content="{html.escape(site['name'], quote=True)}">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{html.escape(title, quote=True)}">
+<meta name="twitter:description" content="{html.escape(desc, quote=True)}">
+<meta name="twitter:image" content="{image}">
 <link rel="alternate" type="application/rss+xml" title="{html.escape(site['name'], quote=True)}" href="/feed.xml">
-<link rel="preload" href="/fonts/a-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/a.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon-32.png" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <style>{CSS}</style>
 </head>
 <body>
@@ -196,11 +204,10 @@ def render_post(site, post, newer, older):
     parts = []
     if post["picture"]:
         parts.append(f'<img class="pic" src="/{post["slug"]}/picture.jpg" alt="{html.escape(post["alt"], quote=True)}" width="1200" height="900">')
-    parts.append(f'<p class="t">{html.escape(post["title"])}</p>')
+    parts.append(f'<p class="t">{html.escape(post["title"])} · <time datetime="{post["date"]:%Y-%m-%d}">{post["date"]:%-d %b %Y}</time></p>')
     parts.append('<div class="body">' + "".join(f"<p>{p}</p>" for p in post["paras_html"]) + "</div>")
-    parts.append(f'<p class="q">{inline(post["question"])}</p>')
-    subject = quote(post["title"])
-    parts.append(f'<p class="reply"><a href="mailto:{site["email"]}?subject={subject}">Reply</a></p>')
+    share = "https://x.com/intent/post?text=" + quote(post["title"]) + "&url=" + quote(url, safe="")
+    parts.append(f'<p class="share"><a href="{share}" target="_blank" rel="noopener">Share on X</a></p>')
     parts.append(f'<p class="id"><a href="/">{html.escape(site["name"])}</a></p>')
     nav = []
     if older:
@@ -209,14 +216,21 @@ def render_post(site, post, newer, older):
         nav.append(f'<a href="/{newer["slug"]}/">Next</a>')
     if nav:
         parts.append('<p class="nav">' + "".join(nav) + "</p>")
-    desc = post["first"] or post["question"]
+    desc = post["first"] or post["title"]
     return page(site, post["title"], desc, url, f"{site['domain']}/og/{post['slug']}.png", "\n".join(parts))
 
 
 def render_home(site, posts):
     parts = [f'<h1>{html.escape(site["name"])}</h1>', site["intro_html"]]
     if site["socials"]:
-        parts.append('<p class="soc">' + "".join(f'<a href="{html.escape(u, quote=True)}">{html.escape(n)}</a>' for n, u in site["socials"].items()) + "</p>")
+        links = []
+        for n, u in site["socials"].items():
+            if u.startswith("mailto:"):
+                links.append(f'<a href="{html.escape(u, quote=True)}" data-copy="{html.escape(u[7:], quote=True)}">{html.escape(n)}</a>')
+            else:
+                links.append(f'<a href="{html.escape(u, quote=True)}">{html.escape(n)}</a>')
+        parts.append('<p class="soc">' + "".join(links) + "</p>")
+        parts.append(COPY_JS)
     rows = "".join(
         f'<a href="/{p["slug"]}/"><span>{html.escape(p["title"])}</span><time datetime="{p["date"]:%Y-%m-%d}">{p["date"]:%-d %b %Y}</time></a>'
         for p in posts
@@ -235,7 +249,7 @@ def render_feed(site, posts):
     items = []
     for p in posts:
         link = f"{site['domain']}/{p['slug']}/"
-        content = "".join(f"<p>{x}</p>" for x in p["paras_html"]) + f"<p><em>{inline(p['question'])}</em></p>"
+        content = "".join(f"<p>{x}</p>" for x in p["paras_html"])
         items.append(
             f"<item><title>{html.escape(p['title'])}</title><link>{link}</link><guid>{link}</guid>"
             f"<pubDate>{format_datetime(p['date'])}</pubDate><description>{html.escape(content)}</description></item>"
@@ -336,9 +350,9 @@ def main():
         shutil.rmtree(OUT)
     (OUT / "fonts").mkdir(parents=True)
     (OUT / "og").mkdir()
-    shutil.copy(FONTS / "atkinson-hyperlegible-latin-400-normal.woff2", OUT / "fonts" / "a-400.woff2")
-    shutil.copy(FONTS / "atkinson-hyperlegible-latin-400-italic.woff2", OUT / "fonts" / "a-400i.woff2")
-    shutil.copy(FONTS / "atkinson-hyperlegible-latin-700-normal.woff2", OUT / "fonts" / "a-700.woff2")
+    shutil.copy(FONTS / "atkinson-hyperlegible-next-latin-wght-normal.woff2", OUT / "fonts" / "a.woff2")
+    for f in (ROOT / "static").iterdir():
+        shutil.copy(f, OUT / f.name)
 
     (OUT / "index.html").write_text(render_home(site, posts), encoding="utf-8")
     (OUT / "404.html").write_text(render_404(site), encoding="utf-8")
@@ -355,7 +369,7 @@ def main():
         if p["picture"]:
             picture(p, d / "picture.jpg")
         card(site, p, OUT / "og" / f"{p['slug']}.png")
-        size = sum(f.stat().st_size for f in d.iterdir()) + (OUT / "fonts" / "a-400.woff2").stat().st_size
+        size = sum(f.stat().st_size for f in d.iterdir()) + (OUT / "fonts" / "a.woff2").stat().st_size
         flag = "  (over 300 KB)" if size > 300_000 else ""
         print(f"/{p['slug']}/  {p['words']} words  {size // 1024} KB{flag}")
     print(f"home + {len(posts)} posts built into {OUT.relative_to(ROOT)}/")
