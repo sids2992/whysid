@@ -9,4 +9,6 @@ socials:
   LinkedIn: https://www.linkedin.com/in/siddharthsrivastav/
   Email: mailto:sids999labs@gmail.com
 ---
-I like building products and teams. Currently, dreaming about robots.
+I like building products & teams.
+Built a team that trained robots on 1M+ hours of data.
+Built a product that helped 35,000+ people get jobs.

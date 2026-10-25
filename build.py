@@ -75,7 +75,7 @@ def load_site():
     meta, intro = read_front_matter((ROOT / "site.md").read_text(encoding="utf-8"))
     meta.setdefault("socials", {})
     meta["domain"] = meta.get("domain", "").rstrip("/")
-    meta["intro_html"] = "".join(f"<p>{inline(p)}</p>" for p in re.split(r"\n\s*\n", intro) if p.strip())
+    meta["intro_html"] = '<div class="intro">' + "".join(f"<p>{inline(l.strip())}</p>" for l in intro.splitlines() if l.strip()) + "</div>"
     return meta
 
 
@@ -145,6 +145,7 @@ a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-und
 .id a{text-decoration:none}.id a:hover{text-decoration:underline}
 .nav{margin-top:12px;font-size:13px;line-height:1.4;color:var(--mute);display:flex;gap:16px}
 h1{font-size:28px;line-height:1.2;font-weight:700;font-variation-settings:"wght" 700;margin-bottom:20px}
+.intro p+p{font-size:16px;line-height:1.5;color:var(--mute)}.intro p:nth-child(2){margin-top:20px}.intro p+p+p{margin-top:6px}
 .soc{margin:28px 0 64px;font-size:15px;line-height:1.5;color:var(--mute);display:flex;gap:20px;flex-wrap:wrap}
 .soc a.ok{color:var(--accent);text-decoration:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
@@ -152,7 +153,7 @@ h1{font-size:28px;line-height:1.2;font-weight:700;font-variation-settings:"wght"
 .list a{display:flex;justify-content:space-between;align-items:baseline;gap:16px;min-height:44px;padding:10px 0;text-decoration:none}
 .list a span{font-size:18px;line-height:1.4;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:var(--mute)}
 .list a time{font-size:13px;line-height:1.4;color:var(--mute);white-space:nowrap}
-@media(min-width:700px){html{font-size:21px;line-height:1.65}body{padding:112px 24px 96px}.t{font-size:15px}.share{font-size:18px}.id{font-size:15px}.nav{font-size:14px;gap:20px}h1{font-size:32px}.soc{font-size:16px;gap:24px}.list a span{font-size:19px}.list a time{font-size:14px}}
+@media(min-width:700px){html{font-size:21px;line-height:1.65}body{padding:112px 24px 96px}.t{font-size:15px}.share{font-size:18px}.id{font-size:15px}.nav{font-size:14px;gap:20px}h1{font-size:32px}.soc{font-size:16px;gap:24px}.intro p+p{font-size:17px}.list a span{font-size:19px}.list a time{font-size:14px}}
 """
 
 COPY_JS = """<span class="sr" aria-live="polite"></span>
