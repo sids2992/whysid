@@ -4,6 +4,7 @@ tagline: Robots in homes.
 domain: https://whysid.com
 email: sids999labs@gmail.com
 goatcounter: whysid
+dot_blink: yes
 socials:
   X: https://x.com/sidvent
   LinkedIn: https://www.linkedin.com/in/siddharthsrivastav/
