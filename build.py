@@ -95,7 +95,9 @@ def load_site():
             return f"<p>{inline(l)}</p>"
         short = m.group(1).upper() + m.group(2)
         return f'<p><span class="full">{inline(l)}</span><span class="short">{inline(short)}</span></p>'
-    meta["intro_html"] = '<div class="intro">' + "".join(intro_line(l.strip()) for l in intro.splitlines() if l.strip()) + "</div>"
+    raw = [l.strip() for l in intro.splitlines() if l.strip()]
+    meta["intro_html"] = '<div class="intro">' + "".join(intro_line(l) for l in raw) + "</div>"
+    meta["intro_lines"] = [html.unescape(re.sub(r"<[^>]+>", "", inline(l))) for l in raw]
     return meta
 
 
@@ -284,7 +286,7 @@ def render_home(site, posts):
         for p in posts
     )
     parts.append(f'<div class="list">{rows}</div>')
-    desc = first_sentence(re.sub(r"<[^>]+>", "", site["intro_html"]))
+    desc = " ".join(site["intro_lines"])
     return page(site, site["name"], desc, site["domain"] + "/", f"{site['domain']}/og/home.png", "\n".join(parts))
 
 
@@ -380,8 +382,7 @@ def card(site, post, out_path):
 
     if post is None:  # home card
         name_with_dot(d, 96, 112, 72)
-        lines = [re.sub(r"<[^>]+>", "", m) for m in re.findall(r"<p>(.*?)</p>", site["intro_html"])]
-        lines = [html.unescape(l) for l in lines]
+        lines = list(site["intro_lines"])
         y = 112 + 72 * 1.2 + 28
         if lines:
             d.text((96, y), lines[0], font=font(34, 380), fill=fg)
