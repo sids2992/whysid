@@ -146,8 +146,8 @@ def load_posts():
 
 CSS = """
 @font-face{font-family:A;src:url(/fonts/a.woff2) format("woff2");font-weight:200 800;font-style:normal;font-display:swap}
-:root{--bg:#f7f5f0;--fg:#1c1b19;--mute:#6b6761;--line:#cbc6bd;--accent:#b8401f;--w:360;--s:15px;color-scheme:light dark}
-@media(prefers-color-scheme:dark){:root{--bg:#151412;--fg:#dcd8cf;--mute:#a39e95;--line:#4b4842;--accent:#e8734d;--w:340}}
+:root{--bg:#f7f5f0;--fg:#1c1b19;--mute:#6b6761;--line:#cbc6bd;--faint:#dfdbd3;--accent:#b8401f;--w:360;--s:15px;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--bg:#151412;--fg:#dcd8cf;--mute:#a39e95;--line:#4b4842;--faint:#363430;--accent:#e8734d;--w:340}}
 *{box-sizing:border-box}
 html{background:var(--bg);color:var(--fg);font:400 20px/1.6 A,"Helvetica Neue",Arial,sans-serif;font-variation-settings:"wght" var(--w);font-weight:var(--w);-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 body{margin:0;padding:64px 24px 56px;max-width:688px;margin-inline:auto;animation:in .15s ease-out}
@@ -184,7 +184,7 @@ h1.still .dot{animation:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .list{display:flex;flex-direction:column}
 .list a{display:flex;align-items:baseline;gap:16px;min-height:44px;padding:8px 0;text-decoration:none}
-.list a span{line-height:1.4;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;text-decoration-color:var(--line)}
+.list a span{font-size:.9em;line-height:1.4;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;text-decoration-color:var(--faint)}
 .list a:hover span{text-decoration-color:currentColor}
 .list a time{flex:none;width:6.6em;font-size:calc(var(--s) * .93);line-height:1.4;color:var(--mute);white-space:nowrap}
 @media(max-width:699px){.list{gap:20px}.list a{flex-direction:column;align-items:flex-start;gap:4px;padding:0;min-height:0}.list a time{width:auto;line-height:1.2}.list a span{line-height:1.3}}
