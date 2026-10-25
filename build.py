@@ -179,7 +179,7 @@ h1.still .dot{animation:none}
 .intro p+p{font-size:var(--s);line-height:1.5;color:var(--mute)}
 .intro .short{display:none}
 @media(max-width:395px){.intro .full{display:none}.intro .short{display:inline}}.intro p:nth-child(2){margin-top:16px}.intro p+p+p{margin-top:8px}
-.soc{margin:32px 0 40px;font-size:var(--s);line-height:1.5;color:var(--mute);display:flex;gap:20px;flex-wrap:wrap}
+.soc{margin:32px 0 64px;font-size:var(--s);line-height:1.5;color:var(--mute);display:flex;gap:20px;flex-wrap:wrap}
 .soc a.ok{color:var(--accent);text-decoration:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .list{display:flex;flex-direction:column}

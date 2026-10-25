@@ -11,5 +11,5 @@ socials:
   Email: mailto:sids999labs@gmail.com
 ---
 I like building products & teams.
-Built a team: collected 1M+ hours for teaching robots.
-Built a product: upskilled 3M+ people for dream jobs.
+Built a team: 1M+ hours of people training robots.
+Built a product: 3M+ people trained for jobs.
