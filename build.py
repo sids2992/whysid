@@ -46,9 +46,23 @@ def read_front_matter(text):
     return meta, body.strip()
 
 
+def smart(t):
+    """Curly quotes and apostrophes, leaving link URLs untouched."""
+    parts = re.split(r"(\]\(https?://[^\s)]+\))", t)
+    for i in range(0, len(parts), 2):
+        p = parts[i]
+        p = re.sub(r"(?<=\w)'", "\u2019", p)
+        p = re.sub(r"'(?=\w)", "\u2018", p)
+        p = p.replace("'", "\u2019")
+        p = re.sub(r'(^|[\s(\[])"', "\\1\u201c", p)
+        p = p.replace('"', "\u201d")
+        parts[i] = p
+    return "".join(parts)
+
+
 def inline(md):
     """Escape HTML, then turn [text](url), **bold** and *italic* into tags."""
-    s = html.escape(md, quote=False)
+    s = html.escape(smart(md), quote=False)
     s = re.sub(r"\[([^\]]+)\]\((https?://[^\s)]+)\)", r'<a href="\2">\1</a>', s)
     s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
     s = re.sub(r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)", r"<em>\1</em>", s)
@@ -96,7 +110,7 @@ def load_posts():
                 paras.append(block)
         plain = " ".join(strip_md(p) for p in paras)
         post = {
-            "title": meta["title"].strip(),
+            "title": smart(meta["title"].strip()),
             "date": datetime.strptime(meta["date"], "%Y-%m-%d").replace(tzinfo=timezone.utc),
             "slug": meta.get("slug") or slugify(meta["title"]),
             "paras_html": [inline(p) for p in paras],
@@ -134,7 +148,11 @@ body{margin:0;padding:64px 24px 56px;max-width:688px;margin-inline:auto;animatio
 @keyframes in{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){body{animation:none}}
 p,h1{margin:0}
-a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;text-decoration-color:var(--line)}
+a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;text-decoration-color:var(--line);transition:text-decoration-color .15s,color .15s}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+::selection{background:var(--accent);color:var(--bg)}
+h1,.t,.list span{text-wrap:balance}p{text-wrap:pretty}
+time{font-variant-numeric:tabular-nums}
 a:hover{text-decoration-color:currentColor}
 .t{font-size:var(--s);line-height:1.4;color:var(--mute);margin-bottom:16px}
 .t time{white-space:nowrap;font-size:.93em}
@@ -146,8 +164,11 @@ a:hover{text-decoration-color:currentColor}
 .id a{text-decoration:none}.id a:hover{text-decoration:underline}
 .nav{margin-top:8px;font-size:var(--s);line-height:1.4;color:var(--mute);display:flex;gap:16px}
 h1{font-size:28px;line-height:1.2;font-weight:600;font-variation-settings:"wght" 600;margin-bottom:16px}
-h1 .dot{color:var(--accent)}
-.intro p+p{font-size:var(--s);line-height:1.5;color:var(--mute)}.intro p:nth-child(2){margin-top:16px}.intro p+p+p{margin-top:4px}
+h1 .dot{color:var(--accent);display:inline-block}
+h1.blink .dot{animation:blink 1.2s ease-in-out .6s 1}
+@keyframes blink{0%,100%{opacity:1}18%{opacity:.12}36%{opacity:1}54%{opacity:.12}72%{opacity:1}}
+@media(prefers-reduced-motion:reduce){h1.blink .dot{animation:none}}
+.intro p+p{font-size:var(--s);line-height:1.5;color:var(--mute)}.intro p:nth-child(2){margin-top:16px}.intro p+p+p{margin-top:8px}
 .soc{margin:32px 0 40px;font-size:var(--s);line-height:1.5;color:var(--mute);display:flex;gap:20px;flex-wrap:wrap}
 .soc a.ok{color:var(--accent);text-decoration:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
@@ -156,7 +177,8 @@ h1 .dot{color:var(--accent)}
 .list a span{line-height:1.4;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;text-decoration-color:var(--line)}
 .list a:hover span{text-decoration-color:currentColor}
 .list a time{flex:none;width:6.6em;font-size:calc(var(--s) * .93);line-height:1.4;color:var(--mute);white-space:nowrap}
-@media(min-width:700px){:root{--s:16px}html{font-size:21px;line-height:1.65}body{padding:112px 24px 96px}h1{font-size:32px}.soc{gap:24px}.nav{gap:20px}}
+@media(min-width:700px){:root{--s:clamp(16px,.25vw + 13px,18px)}html{font-size:clamp(21px,.45vw + 15.5px,23px);line-height:1.65}body{max-width:calc(30.5em + 48px);padding:112px 24px 96px}h1{font-size:clamp(32px,1.2vw + 17px,40px)}.soc{gap:24px}.nav{gap:20px}.intro p+p+p{margin-top:4px}}
+@media print{:root{--bg:#fff;--fg:#000;--mute:#555;--line:#999}body{padding:0;max-width:none;animation:none}.share,.nav{display:none}.body a::after{content:" (" attr(href) ")";font-size:.8em;color:#555}.pic{max-width:60%}}
 """
 
 COPY_JS = """<span class="sr" aria-live="polite"></span>
@@ -173,6 +195,8 @@ def page(site, title, desc, url, image, body, feed=True):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f7f5f0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#151412" media="(prefers-color-scheme: dark)">
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc, quote=True)}">
 <link rel="canonical" href="{url}">
@@ -225,7 +249,8 @@ def render_post(site, post, newer, older):
 
 
 def render_home(site, posts):
-    parts = [f'<h1>{html.escape(site["name"])}<span class="dot">.</span></h1>', site["intro_html"]]
+    blink = ' class="blink"' if site.get("dot_blink", "").lower() in ("yes", "true", "on") else ""
+    parts = [f'<h1{blink}>{html.escape(site["name"])}<span class="dot">.</span></h1>', site["intro_html"]]
     if site["socials"]:
         links = []
         for n, u in site["socials"].items():
@@ -245,7 +270,7 @@ def render_home(site, posts):
 
 
 def render_404(site):
-    body = f'<p class="t">Not found</p><div class="body"><p>There is no page here.</p></div><p class="id"><a href="/">{html.escape(site["name"])}</a></p>'
+    body = f'<p class="t">Not found</p><div class="body"><p>Nothing here. Even robots take a wrong turn sometimes.</p></div><p class="id"><a href="/">{html.escape(site["name"])}</a></p>'
     return page(site, "Not found", "Not found", site["domain"] + "/404", f"{site['domain']}/og/home.png", body)
 
 
@@ -267,69 +292,117 @@ def render_feed(site, posts):
 
 # ---------------------------------------------------------------- images
 
+def _card_font():
+    """Variable TTF for Pillow, converted once from the site's woff2."""
+    global _CARD_TTF
+    try:
+        return _CARD_TTF
+    except NameError:
+        pass
+    from fontTools.ttLib import TTFont
+    import tempfile
+    f = TTFont(FONTS / "whysid-sans.woff2")
+    f.flavor = None
+    path = Path(tempfile.gettempdir()) / "whysid-sans.ttf"
+    f.save(path)
+    _CARD_TTF = str(path)
+    return _CARD_TTF
+
+
 def card(site, post, out_path):
     from PIL import Image, ImageDraw, ImageFont
 
     W, H = 1200, 630
-    bg, fg, mute = "#f7f5f0", "#1c1b19", "#6b6761"
-    regular = str(FONTS / "atkinson-hyperlegible-latin-400-normal.ttf")
+    bg, fg, mute, accent = "#f7f5f0", "#1c1b19", "#6b6761", "#b8401f"
+    ttf = _card_font()
 
-    def wrap(draw, text, font, width):
-        words, lines, cur = text.split(), [], ""
+    def font(size, weight):
+        f = ImageFont.truetype(ttf, size)
+        f.set_variation_by_axes([weight])
+        return f
+
+    def greedy(d, words, f, width):
+        lines, cur = [], ""
         for w in words:
             t = (cur + " " + w).strip()
-            if draw.textlength(t, font=font) <= width:
-                cur = t
-            else:
+            if cur and d.textlength(t, font=f) > width:
                 lines.append(cur)
                 cur = w
+            else:
+                cur = t
         if cur:
             lines.append(cur)
         return lines
 
+    def wrap(d, text, f, width, max_lines):
+        """Balanced wrap: same line count as greedy, but even line lengths."""
+        words = text.split()
+        n = len(greedy(d, words, f, width))
+        lo, hi = 50, width
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if len(greedy(d, words, f, mid)) <= n:
+                hi = mid
+            else:
+                lo = mid + 1
+        lines = greedy(d, words, f, lo)
+        if len(lines) > max_lines:
+            lines = lines[:max_lines]
+            lines[-1] = lines[-1].rstrip(".,;:") + "\u2026"
+        return lines
+
+    def name_with_dot(d, x, y, size):
+        f = font(size, 600)
+        d.text((x, y), site["name"], font=f, fill=fg)
+        d.text((x + d.textlength(site["name"], font=f), y), ".", font=f, fill=accent)
+
     img = Image.new("RGB", (W, H), bg)
     d = ImageDraw.Draw(img)
-    identity = site["name"]
 
     if post is None:  # home card
-        f1, f2, f3 = ImageFont.truetype(regular, 56), ImageFont.truetype(regular, 26), ImageFont.truetype(regular, 20)
-        y = 96
-        d.text((120, y), site["name"], font=f1, fill=fg)
-        y += 56 * 1.15 + 28
-        intro = first_sentence(re.sub(r"<[^>]+>", "", site["intro_html"]), 160)
-        for line in wrap(d, intro, f2, 960)[:3]:
-            d.text((120, y), line, font=f2, fill=mute)
-            y += 26 * 1.45
-        d.text((120, H - 96 - 20), "whysid.com", font=f3, fill=mute)
+        name_with_dot(d, 96, 112, 72)
+        lines = [re.sub(r"<[^>]+>", "", m) for m in re.findall(r"<p>(.*?)</p>", site["intro_html"])]
+        lines = [html.unescape(l) for l in lines]
+        y = 112 + 72 * 1.2 + 28
+        if lines:
+            d.text((96, y), lines[0], font=font(34, 380), fill=fg)
+            y += 34 * 1.5 + 22
+        for l in lines[1:3]:
+            d.text((96, y), l, font=font(26, 380), fill=mute)
+            y += 26 * 1.5
+        d.text((96, H - 96 - 22), "whysid.com", font=font(22, 380), fill=mute)
     elif post["picture"]:
         pic = Image.open(post["picture"]).convert("RGB")
-        pw, ph = 840, 630
+        pw, ph = 760, 630
         scale = max(pw / pic.width, ph / pic.height)
         pic = pic.resize((round(pic.width * scale), round(pic.height * scale)), Image.LANCZOS)
         left, top = (pic.width - pw) // 2, (pic.height - ph) // 2
         img.paste(pic.crop((left, top, left + pw, top + ph)), (0, 0))
-        f1, f2, f3 = ImageFont.truetype(regular, 32), ImageFont.truetype(regular, 19), ImageFont.truetype(regular, 16)
-        x, y = 888, 56
-        for line in wrap(d, post["title"], f1, 264)[:4]:
-            d.text((x, y), line, font=f1, fill=fg)
-            y += 32 * 1.25
+        x, width = 816, 336
+        ft, fb = font(40, 600), font(22, 380)
+        y = 64
+        for line in wrap(d, post["title"], ft, width, 4):
+            d.text((x, y), line, font=ft, fill=fg)
+            y += 40 * 1.2
         y += 20
-        for line in wrap(d, post["first"], f2, 264)[:5]:
-            d.text((x, y), line, font=f2, fill=mute)
-            y += 19 * 1.5
-        for i, line in enumerate(wrap(d, identity, f3, 264)[:2]):
-            d.text((x, H - 56 - 16 * 1.4 * (2 - i)), line, font=f3, fill=mute)
+        for line in wrap(d, post["first"], fb, width, 5):
+            d.text((x, y), line, font=fb, fill=mute)
+            y += 22 * 1.5
+        name_with_dot(d, x, H - 64 - 22, 22)
     else:
-        f1, f2, f3 = ImageFont.truetype(regular, 56), ImageFont.truetype(regular, 26), ImageFont.truetype(regular, 20)
-        y = 96
-        for line in wrap(d, post["title"], f1, 960)[:3]:
-            d.text((120, y), line, font=f1, fill=fg)
-            y += 56 * 1.15
+        ft, fb = font(64, 600), font(30, 380)
+        y = 104
+        for line in wrap(d, post["title"], ft, 1000, 3):
+            d.text((96, y), line, font=ft, fill=fg)
+            y += 64 * 1.15
         y += 28
-        for line in wrap(d, post["first"], f2, 880)[:3]:
-            d.text((120, y), line, font=f2, fill=mute)
-            y += 26 * 1.45
-        d.text((120, H - 96 - 20), identity, font=f3, fill=mute)
+        for line in wrap(d, post["first"], fb, 960, 3):
+            d.text((96, y), line, font=fb, fill=mute)
+            y += 30 * 1.45
+        name_with_dot(d, 96, H - 96 - 26, 26)
+        date = f"{post['date']:%-d %b %Y}"
+        fd = font(22, 380)
+        d.text((W - 96 - d.textlength(date, font=fd), H - 96 - 22), date, font=fd, fill=mute)
 
     img.save(out_path, "PNG", optimize=True)
 
