@@ -89,7 +89,13 @@ def load_site():
     meta, intro = read_front_matter((ROOT / "site.md").read_text(encoding="utf-8"))
     meta.setdefault("socials", {})
     meta["domain"] = meta.get("domain", "").rstrip("/")
-    meta["intro_html"] = '<div class="intro">' + "".join(f"<p>{inline(l.strip())}</p>" for l in intro.splitlines() if l.strip()) + "</div>"
+    def intro_line(l):
+        m = re.match(r"Built an? (\w)(.*)$", l)
+        if not m:
+            return f"<p>{inline(l)}</p>"
+        short = m.group(1).upper() + m.group(2)
+        return f'<p><span class="full">{inline(l)}</span><span class="short">{inline(short)}</span></p>'
+    meta["intro_html"] = '<div class="intro">' + "".join(intro_line(l.strip()) for l in intro.splitlines() if l.strip()) + "</div>"
     return meta
 
 
@@ -165,10 +171,14 @@ a:hover{text-decoration-color:currentColor}
 .nav{margin-top:8px;font-size:var(--s);line-height:1.4;color:var(--mute);display:flex;gap:16px}
 h1{font-size:28px;line-height:1.2;font-weight:600;font-variation-settings:"wght" 600;margin-bottom:16px}
 h1 .dot{color:var(--accent);display:inline-block}
-h1.blink .dot{animation:blink 1.2s ease-in-out .6s 1}
+h1.blink .dot{animation:blink 1.2s ease-in-out .6s 1,breathe 5s ease-in-out 2.4s 4}
+h1.still .dot{animation:none}
 @keyframes blink{0%,100%{opacity:1}18%{opacity:.12}36%{opacity:1}54%{opacity:.12}72%{opacity:1}}
+@keyframes breathe{0%,100%{opacity:1}50%{opacity:.45}}
 @media(prefers-reduced-motion:reduce){h1.blink .dot{animation:none}}
-.intro p+p{font-size:var(--s);line-height:1.5;color:var(--mute)}.intro p:nth-child(2){margin-top:16px}.intro p+p+p{margin-top:8px}
+.intro p+p{font-size:var(--s);line-height:1.5;color:var(--mute)}
+.intro .short{display:none}
+@media(max-width:395px){.intro .full{display:none}.intro .short{display:inline}}.intro p:nth-child(2){margin-top:16px}.intro p+p+p{margin-top:8px}
 .soc{margin:32px 0 40px;font-size:var(--s);line-height:1.5;color:var(--mute);display:flex;gap:20px;flex-wrap:wrap}
 .soc a.ok{color:var(--accent);text-decoration:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
@@ -251,6 +261,8 @@ def render_post(site, post, newer, older):
 def render_home(site, posts):
     blink = ' class="blink"' if site.get("dot_blink", "").lower() in ("yes", "true", "on") else ""
     parts = [f'<h1{blink}>{html.escape(site["name"])}<span class="dot">.</span></h1>', site["intro_html"]]
+    if blink:
+        parts.append("<script>(function(){var h=document.querySelector('h1.blink');function s(){h.classList.add('still')}addEventListener('scroll',s,{once:true,passive:true})})()</script>")
     if site["socials"]:
         links = []
         for n, u in site["socials"].items():
