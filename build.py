@@ -173,6 +173,8 @@ a:hover{text-decoration-color:currentColor}
 .foot{margin-top:56px;display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;font-size:var(--s);line-height:1.4}
 .foot .me{font-weight:600;font-variation-settings:"wght" 600;color:var(--fg);text-decoration:none}
 .foot .me .dot{color:var(--accent)}
+a{-webkit-tap-highlight-color:transparent}
+a:active,.share a:active,.list a:active span{color:var(--accent);text-decoration-color:currentColor;transition:none}.foot .me:active{color:var(--fg)}
 @media(hover:hover){a:hover,.share a:hover,.list a:hover span{color:var(--accent);text-decoration-color:currentColor}.foot .me:hover{color:var(--fg)}.list a span{transition:color .15s,text-decoration-color .15s}}
 h1{font-size:28px;line-height:1.2;font-weight:600;font-variation-settings:"wght" 600;margin-bottom:16px}
 h1 .dot{color:var(--accent);display:inline-block}
@@ -235,7 +237,7 @@ def page(site, title, desc, url, image, body, feed=True):
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <style>{CSS}</style>
 </head>
-<body>
+<body ontouchstart="">
 {body}
 {analytics}
 </body>
