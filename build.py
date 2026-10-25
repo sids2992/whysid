@@ -126,34 +126,36 @@ def load_posts():
 
 CSS = """
 @font-face{font-family:A;src:url(/fonts/a.woff2) format("woff2");font-weight:200 800;font-style:normal;font-display:swap}
-:root{--bg:#f7f5f0;--fg:#1c1b19;--mute:#6b6761;--accent:#b8401f;--w:360;color-scheme:light dark}
-@media(prefers-color-scheme:dark){:root{--bg:#151412;--fg:#dcd8cf;--mute:#a39e95;--accent:#e8734d;--w:340}}
+:root{--bg:#f7f5f0;--fg:#1c1b19;--mute:#6b6761;--line:#cbc6bd;--accent:#b8401f;--w:360;--s:15px;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--bg:#151412;--fg:#dcd8cf;--mute:#a39e95;--line:#4b4842;--accent:#e8734d;--w:340}}
 *{box-sizing:border-box}
 html{background:var(--bg);color:var(--fg);font:400 20px/1.6 A,"Helvetica Neue",Arial,sans-serif;font-variation-settings:"wght" var(--w);font-weight:var(--w);-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-body{margin:0;padding:64px 24px 48px;max-width:688px;margin-inline:auto;animation:in .15s ease-out}
+body{margin:0;padding:64px 24px 56px;max-width:688px;margin-inline:auto;animation:in .15s ease-out}
 @keyframes in{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){body{animation:none}}
 p,h1{margin:0}
-a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
-.t{font-size:14px;line-height:1.4;color:var(--mute);margin-bottom:20px}
-.t time{white-space:nowrap;font-size:.86em;letter-spacing:.01em}
+a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;text-decoration-color:var(--line)}
+a:hover{text-decoration-color:currentColor}
+.t{font-size:var(--s);line-height:1.4;color:var(--mute);margin-bottom:16px}
+.t time{white-space:nowrap;font-size:.93em}
 .pic{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:4px;margin-bottom:24px}
 .body p+p{margin-top:1em}
-.share{margin-top:48px;font-size:17px;line-height:1.5}
-.share a{color:var(--accent)}
-.id{margin-top:64px;font-size:14px;line-height:1.4;color:var(--mute)}
+.share{margin-top:32px;font-size:var(--s);line-height:1.5}
+.share a{color:var(--accent);text-decoration-color:currentColor}
+.id{margin-top:56px;font-size:var(--s);line-height:1.4;color:var(--mute)}
 .id a{text-decoration:none}.id a:hover{text-decoration:underline}
-.nav{margin-top:12px;font-size:13px;line-height:1.4;color:var(--mute);display:flex;gap:16px}
-h1{font-size:28px;line-height:1.2;font-weight:700;font-variation-settings:"wght" 700;margin-bottom:20px}
-.intro p+p{font-size:16px;line-height:1.5;color:var(--mute)}.intro p:nth-child(2){margin-top:20px}.intro p+p+p{margin-top:6px}
-.soc{margin:28px 0 64px;font-size:15px;line-height:1.5;color:var(--mute);display:flex;gap:20px;flex-wrap:wrap}
+.nav{margin-top:8px;font-size:var(--s);line-height:1.4;color:var(--mute);display:flex;gap:16px}
+h1{font-size:28px;line-height:1.2;font-weight:700;font-variation-settings:"wght" 700;margin-bottom:16px}
+.intro p+p{font-size:var(--s);line-height:1.5;color:var(--mute)}.intro p:nth-child(2){margin-top:16px}.intro p+p+p{margin-top:8px}
+.soc{margin:32px 0 56px;font-size:var(--s);line-height:1.5;color:var(--mute);display:flex;gap:20px;flex-wrap:wrap}
 .soc a.ok{color:var(--accent);text-decoration:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .list{display:flex;flex-direction:column}
-.list a{display:flex;justify-content:space-between;align-items:baseline;gap:16px;min-height:44px;padding:10px 0;text-decoration:none}
-.list a span{font-size:18px;line-height:1.4;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:var(--mute)}
-.list a time{font-size:13px;line-height:1.4;color:var(--mute);white-space:nowrap}
-@media(min-width:700px){html{font-size:21px;line-height:1.65}body{padding:112px 24px 96px}.t{font-size:15px}.share{font-size:18px}.id{font-size:15px}.nav{font-size:14px;gap:20px}h1{font-size:32px}.soc{font-size:16px;gap:24px}.intro p+p{font-size:17px}.list a span{font-size:19px}.list a time{font-size:14px}}
+.list a{display:flex;justify-content:space-between;align-items:baseline;gap:16px;min-height:44px;padding:8px 0;text-decoration:none}
+.list a span{line-height:1.4;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;text-decoration-color:var(--line)}
+.list a:hover span{text-decoration-color:currentColor}
+.list a time{font-size:calc(var(--s) * .93);line-height:1.4;color:var(--mute);white-space:nowrap}
+@media(min-width:700px){:root{--s:16px}html{font-size:21px;line-height:1.65}body{padding:112px 24px 96px}h1{font-size:32px}.soc{gap:24px}.nav{gap:20px}}
 """
 
 COPY_JS = """<span class="sr" aria-live="polite"></span>
@@ -351,7 +353,7 @@ def main():
         shutil.rmtree(OUT)
     (OUT / "fonts").mkdir(parents=True)
     (OUT / "og").mkdir()
-    shutil.copy(FONTS / "atkinson-hyperlegible-next-latin-wght-normal.woff2", OUT / "fonts" / "a.woff2")
+    shutil.copy(FONTS / "whysid-sans.woff2", OUT / "fonts" / "a.woff2")
     for f in (ROOT / "static").iterdir():
         shutil.copy(f, OUT / f.name)
 
