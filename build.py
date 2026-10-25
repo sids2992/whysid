@@ -168,7 +168,12 @@ a:hover{text-decoration-color:currentColor}
 .share a{color:var(--accent);text-decoration-color:currentColor}
 .id{margin-top:56px;font-size:var(--s);line-height:1.4;color:var(--mute)}
 .id a{text-decoration:none}.id a:hover{text-decoration:underline}
-.nav{margin-top:8px;font-size:var(--s);line-height:1.4;color:var(--mute);display:flex;gap:16px}
+.nav{font-size:var(--s);line-height:1.4;color:var(--mute);display:flex;gap:16px}
+.t .tt{color:var(--fg)}
+.body .end{color:var(--accent)}
+.foot{margin-top:56px;display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;font-size:var(--s);line-height:1.4}
+.foot .me{font-weight:600;font-variation-settings:"wght" 600;color:var(--fg);text-decoration:none}
+.foot .me .dot{color:var(--accent)}
 h1{font-size:28px;line-height:1.2;font-weight:600;font-variation-settings:"wght" 600;margin-bottom:16px}
 h1 .dot{color:var(--accent);display:inline-block}
 h1.blink .dot{animation:blink 1.2s ease-in-out .6s 1,breathe 5s ease-in-out 2.4s 4}
@@ -243,18 +248,19 @@ def render_post(site, post, newer, older):
     parts = []
     if post["picture"]:
         parts.append(f'<img class="pic" src="/{post["slug"]}/picture.jpg" alt="{html.escape(post["alt"], quote=True)}" width="1200" height="900">')
-    parts.append(f'<p class="t">{html.escape(post["title"])} · <time datetime="{post["date"]:%Y-%m-%d}">{post["date"]:%-d %b %Y}</time></p>')
-    parts.append('<div class="body">' + "".join(f"<p>{p}</p>" for p in post["paras_html"]) + "</div>")
+    parts.append(f'<p class="t"><span class="tt">{html.escape(post["title"])}</span> · <time datetime="{post["date"]:%Y-%m-%d}">{post["date"]:%-d %b %Y}</time></p>')
+    paras = list(post["paras_html"])
+    if paras:
+        paras[-1] = re.sub(r"\.(\s*)$", r'<span class="end">.</span>\1', paras[-1])
+    parts.append('<div class="body">' + "".join(f"<p>{p}</p>" for p in paras) + "</div>")
     share = "https://x.com/intent/post?text=" + quote(post["title"]) + "&url=" + quote(url, safe="") + "&via=sidvent"
     parts.append(f'<p class="share"><a href="{share}" target="_blank" rel="noopener">Share on X</a></p>')
-    parts.append(f'<p class="id"><a href="/">{html.escape(site["name"])}</a></p>')
     nav = []
     if older:
-        nav.append(f'<a href="/{older["slug"]}/">Previous</a>')
+        nav.append(f'<a href="/{older["slug"]}/">\u2190 Previous</a>')
     if newer:
-        nav.append(f'<a href="/{newer["slug"]}/">Next</a>')
-    if nav:
-        parts.append('<p class="nav">' + "".join(nav) + "</p>")
+        nav.append(f'<a href="/{newer["slug"]}/">Next \u2192</a>')
+    parts.append(f'<div class="foot"><a class="me" href="/">{html.escape(site["name"])}<span class="dot">.</span></a><span class="nav">' + "".join(nav) + "</span></div>")
     desc = post["first"] or post["title"]
     return page(site, post["title"], desc, url, f"{site['domain']}/og/{post['slug']}.png", "\n".join(parts))
 
