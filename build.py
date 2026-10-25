@@ -173,6 +173,7 @@ a:hover{text-decoration-color:currentColor}
 .foot{margin-top:56px;display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;font-size:var(--s);line-height:1.4}
 .foot .me{font-weight:600;font-variation-settings:"wght" 600;color:var(--fg);text-decoration:none}
 .foot .me .dot{color:var(--accent)}
+@media(hover:hover){a:hover,.share a:hover,.list a:hover span{color:var(--accent);text-decoration-color:currentColor}.foot .me:hover{color:var(--fg)}.list a span{transition:color .15s,text-decoration-color .15s}}
 h1{font-size:28px;line-height:1.2;font-weight:600;font-variation-settings:"wght" 600;margin-bottom:16px}
 h1 .dot{color:var(--accent);display:inline-block}
 h1.blink .dot{animation:blink 1.2s ease-in-out .6s 1,breathe 5s ease-in-out 2.4s 4}
