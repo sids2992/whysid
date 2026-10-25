@@ -187,6 +187,7 @@ h1.still .dot{animation:none}
 .list a span{line-height:1.4;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;text-decoration-color:var(--line)}
 .list a:hover span{text-decoration-color:currentColor}
 .list a time{flex:none;width:6.6em;font-size:calc(var(--s) * .93);line-height:1.4;color:var(--mute);white-space:nowrap}
+@media(max-width:699px){.list{gap:20px}.list a{flex-direction:column;align-items:flex-start;gap:4px;padding:0;min-height:0}.list a time{width:auto;line-height:1.2}.list a span{line-height:1.3}}
 @media(min-width:700px){:root{--s:clamp(16px,.25vw + 13px,18px)}html{font-size:clamp(21px,.45vw + 15.5px,23px);line-height:1.65}body{max-width:calc(30.5em + 48px);padding:112px 24px 96px}h1{font-size:clamp(32px,1.2vw + 17px,40px)}.soc{gap:24px}.nav{gap:20px}.intro p+p+p{margin-top:4px}}
 @media print{:root{--bg:#fff;--fg:#000;--mute:#555;--line:#999}body{padding:0;max-width:none;animation:none}.share,.nav{display:none}.body a::after{content:" (" attr(href) ")";font-size:.8em;color:#555}.pic{max-width:60%}}
 """
