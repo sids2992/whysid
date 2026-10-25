@@ -160,17 +160,16 @@ a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-und
 h1,.t,.list span{text-wrap:balance}p{text-wrap:pretty}
 time{font-variant-numeric:tabular-nums}
 a:hover{text-decoration-color:currentColor}
-.t{font-size:var(--s);line-height:1.4;color:var(--mute);margin-bottom:16px}
+.t{font-size:var(--s);line-height:1.4;color:var(--mute);margin-bottom:24px}
 .t time{white-space:nowrap;font-size:.93em}
 .pic{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:4px;margin-bottom:24px}
 .body p+p{margin-top:1em}
 .share{margin-top:32px;font-size:var(--s);line-height:1.5}
-.share a{color:var(--accent);text-decoration-color:currentColor}
+.share a{color:var(--mute);text-decoration-color:var(--line)}
 .id{margin-top:56px;font-size:var(--s);line-height:1.4;color:var(--mute)}
 .id a{text-decoration:none}.id a:hover{text-decoration:underline}
 .nav{font-size:var(--s);line-height:1.4;color:var(--mute);display:flex;gap:16px}
 .t .tt{color:var(--fg)}
-.body .end{color:var(--accent)}
 .foot{margin-top:56px;display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;font-size:var(--s);line-height:1.4}
 .foot .me{font-weight:600;font-variation-settings:"wght" 600;color:var(--fg);text-decoration:none}
 .foot .me .dot{color:var(--accent)}
@@ -250,8 +249,6 @@ def render_post(site, post, newer, older):
         parts.append(f'<img class="pic" src="/{post["slug"]}/picture.jpg" alt="{html.escape(post["alt"], quote=True)}" width="1200" height="900">')
     parts.append(f'<p class="t"><span class="tt">{html.escape(post["title"])}</span> · <time datetime="{post["date"]:%Y-%m-%d}">{post["date"]:%-d %b %Y}</time></p>')
     paras = list(post["paras_html"])
-    if paras:
-        paras[-1] = re.sub(r"\.(\s*)$", r'<span class="end">.</span>\1', paras[-1])
     parts.append('<div class="body">' + "".join(f"<p>{p}</p>" for p in paras) + "</div>")
     share = "https://x.com/intent/post?text=" + quote(post["title"]) + "&url=" + quote(url, safe="") + "&via=sidvent"
     parts.append(f'<p class="share"><a href="{share}" target="_blank" rel="noopener">Share on X</a></p>')
