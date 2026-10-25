@@ -145,16 +145,17 @@ a:hover{text-decoration-color:currentColor}
 .id{margin-top:56px;font-size:var(--s);line-height:1.4;color:var(--mute)}
 .id a{text-decoration:none}.id a:hover{text-decoration:underline}
 .nav{margin-top:8px;font-size:var(--s);line-height:1.4;color:var(--mute);display:flex;gap:16px}
-h1{font-size:28px;line-height:1.2;font-weight:700;font-variation-settings:"wght" 700;margin-bottom:16px}
-.intro p+p{font-size:var(--s);line-height:1.5;color:var(--mute)}.intro p:nth-child(2){margin-top:16px}.intro p+p+p{margin-top:8px}
-.soc{margin:32px 0 56px;font-size:var(--s);line-height:1.5;color:var(--mute);display:flex;gap:20px;flex-wrap:wrap}
+h1{font-size:28px;line-height:1.2;font-weight:600;font-variation-settings:"wght" 600;margin-bottom:16px}
+h1 .dot{color:var(--accent)}
+.intro p+p{font-size:var(--s);line-height:1.5;color:var(--mute)}.intro p:nth-child(2){margin-top:16px}.intro p+p+p{margin-top:4px}
+.soc{margin:32px 0 40px;font-size:var(--s);line-height:1.5;color:var(--mute);display:flex;gap:20px;flex-wrap:wrap}
 .soc a.ok{color:var(--accent);text-decoration:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .list{display:flex;flex-direction:column}
-.list a{display:flex;justify-content:space-between;align-items:baseline;gap:16px;min-height:44px;padding:8px 0;text-decoration:none}
+.list a{display:flex;align-items:baseline;gap:16px;min-height:44px;padding:8px 0;text-decoration:none}
 .list a span{line-height:1.4;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;text-decoration-color:var(--line)}
 .list a:hover span{text-decoration-color:currentColor}
-.list a time{font-size:calc(var(--s) * .93);line-height:1.4;color:var(--mute);white-space:nowrap}
+.list a time{flex:none;width:6.6em;font-size:calc(var(--s) * .93);line-height:1.4;color:var(--mute);white-space:nowrap}
 @media(min-width:700px){:root{--s:16px}html{font-size:21px;line-height:1.65}body{padding:112px 24px 96px}h1{font-size:32px}.soc{gap:24px}.nav{gap:20px}}
 """
 
@@ -224,7 +225,7 @@ def render_post(site, post, newer, older):
 
 
 def render_home(site, posts):
-    parts = [f'<h1>{html.escape(site["name"])}</h1>', site["intro_html"]]
+    parts = [f'<h1>{html.escape(site["name"])}<span class="dot">.</span></h1>', site["intro_html"]]
     if site["socials"]:
         links = []
         for n, u in site["socials"].items():
@@ -235,7 +236,7 @@ def render_home(site, posts):
         parts.append('<p class="soc">' + "".join(links) + "</p>")
         parts.append(COPY_JS)
     rows = "".join(
-        f'<a href="/{p["slug"]}/"><span>{html.escape(p["title"])}</span><time datetime="{p["date"]:%Y-%m-%d}">{p["date"]:%-d %b %Y}</time></a>'
+        f'<a href="/{p["slug"]}/"><time datetime="{p["date"]:%Y-%m-%d}">{p["date"]:%-d %b %Y}</time><span>{html.escape(p["title"])}</span></a>'
         for p in posts
     )
     parts.append(f'<div class="list">{rows}</div>')
