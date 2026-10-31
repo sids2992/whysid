@@ -255,7 +255,7 @@ def render_post(site, post, newer, older):
     parts = []
     if post["picture"]:
         parts.append(f'<img class="pic" src="/{post["slug"]}/picture.jpg" alt="{html.escape(post["alt"], quote=True)}" width="1200" height="900">')
-    parts.append(f'<p class="t"><span class="tt">{html.escape(post["title"])}</span> \u00b7 <time datetime="{post["date"]:%Y-%m-%d}">{post["date"]:%-d %b %Y}</time></p>')
+    parts.append(f'<p class="t"><span class="tt">{html.escape(post["title"])}</span> \u00b7 <time datetime="{post["date"]:%Y-%m-%d}">{post["date"]:%d %b %y}</time></p>')
     paras = list(post["paras_html"])
     parts.append('<div class="body">' + "".join(f"<p>{p}</p>" for p in paras) + "</div>")
     share = "https://x.com/intent/post?text=" + quote(post["title"]) + "&url=" + quote(url, safe="") + "&via=sidvent"
@@ -285,7 +285,7 @@ def render_home(site, posts):
         parts.append('<p class="soc">' + "".join(links) + "</p>")
         parts.append(COPY_JS)
     rows = "".join(
-        f'<a href="/{p["slug"]}/"><time datetime="{p["date"]:%Y-%m-%d}">{p["date"]:%-d %b %Y}</time><span>{html.escape(p["title"])}</span></a>'
+        f'<a href="/{p["slug"]}/"><time datetime="{p["date"]:%Y-%m-%d}">{p["date"]:%d %b %y}</time><span>{html.escape(p["title"])}</span></a>'
         for p in posts
     )
     parts.append(f'<div class="list">{rows}</div>')
@@ -423,7 +423,7 @@ def card(site, post, out_path):
             d.text((96, y), line, font=fb, fill=mute)
             y += 30 * 1.45
         name_with_dot(d, 96, H - 96 - 26, 26)
-        date = f"{post['date']:%-d %b %Y}"
+        date = f"{post['date']:%d %b %y}"
         fd = font(22, 380)
         d.text((W - 96 - d.textlength(date, font=fd), H - 96 - 22), date, font=fd, fill=mute)
 
