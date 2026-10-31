@@ -160,7 +160,8 @@ a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-und
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
 ::selection{background:var(--accent);color:var(--bg)}
 h1,.t,.list span{text-wrap:balance}p{text-wrap:pretty}
-time{font-variant-numeric:tabular-nums}
+@font-face{font-family:M;src:url(/fonts/m.woff2) format("woff2");font-weight:200 800;font-style:normal;font-display:swap}
+time{font-family:M,ui-monospace,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em;word-spacing:-.3em}
 a:hover{text-decoration-color:currentColor}
 .t{font-size:var(--s);line-height:1.4;color:var(--mute);margin-bottom:24px}
 .t time{white-space:nowrap;font-size:.93em}
@@ -451,6 +452,7 @@ def main():
     (OUT / "fonts").mkdir(parents=True)
     (OUT / "og").mkdir()
     shutil.copy(FONTS / "whysid-sans.woff2", OUT / "fonts" / "a.woff2")
+    shutil.copy(FONTS / "whysid-mono.woff2", OUT / "fonts" / "m.woff2")
     for f in (ROOT / "static").iterdir():
         shutil.copy(f, OUT / f.name)
 
